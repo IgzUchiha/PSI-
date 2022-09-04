@@ -1,21 +1,31 @@
-const Token = artifacts.require("Token")
+const Token = artifacts.require("./Token")
 
 require('chai')
 .use(require('chai-as-promised'))
 .should()
 
-contract('Token', ([deployer]) => {
-const name = 'Psichedelic'
-const symbol = 'PSI'
-const decimals = '18'
-const totalSupply =  '900000000'
-let token 
-beforeEach(async () => {
-    token = await Token.new()
-})
+// contract('Token', ([deployer]) => {
+// const name = 'Psichedelic'
+// const symbol = 'PSI'
+// const decimals = '18'
+// const totalSupply =  '900000000'
+// let token 
+// beforeEach(async () => {
+//     token = await Token.new()
+// })
+contract('Token', (accounts) => {
+    const name = 'Psicedelic';
+    const symbol = 'PSI';
+    const decimals = '18'
+    const totalSupply = "1000000000000000000000000"
 
+    let token 
+    beforeEach(async () => {
+       token = await Token.new()
+    })
     describe('deployment', () => {
         it('tracks the name', async () => {
+          
            const result = await token.name()
            result.should.equal(name)
         })
