@@ -52,14 +52,14 @@ contract('Token', ([deployer, receiver]) => {
          let balanceOf
 
          balanceOf = await token.balanceOf(deployer)
-         console.log("deployer balance before transfer", balanceOf)
+         console.log("deployer balance before transfer", balanceOf.toString())
          balanceOf = await token.balanceOf(receiver)
          console.log("receive balance before transfer", balanceOf.toString())
          
           //transfer
          await token.transfer(receiver, '100000000000000000000', {from: deployer})
          balanceOf = await token.balanceOf(deployer)
-         console.log("deployer balance after transfer", balanceOf)
+         console.log("deployer balance after transfer", balanceOf.toString())
          balanceOf = await token.balanceOf(receiver)
          console.log("receive balance after transfer", balanceOf.toString())
           
