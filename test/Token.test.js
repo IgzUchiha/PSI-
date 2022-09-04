@@ -13,7 +13,7 @@ require('chai')
 // beforeEach(async () => {
 //     token = await Token.new()
 // })
-contract('Token', (accounts) => {
+contract('Token', ([deployer, receiver]) => {
     const name = 'Psicedelic';
     const symbol = 'PSI';
     const decimals = '18'
@@ -43,7 +43,26 @@ contract('Token', (accounts) => {
         })  
         it('assigns the total supply to the deployer', async () => {
             const result = await token.balanceOf(deployer)
-            result.toString().should.equal(tokens(totalSupply))
+            result.toString().should.equal(totalSupply)
         })  
+      })
+
+    describe('sending tokens', () =>{
+        it('transfers tokens balances', async () => {
+         let balanceOf
+
+         balanceOf = await token.balanceOf(deployer)
+         console.log("deployer balance before transfer", balanceOf)
+         balanceOf = await token.balanceOf(receiver)
+         console.log("receive balance before transfer", balanceOf.toString())
+         
+          //transfer
+         await token.transfer(receiver, '100000000000000000000', {from: deployer})
+         balanceOf = await token.balanceOf(deployer)
+         console.log("deployer balance after transfer", balanceOf)
+         balanceOf = await token.balanceOf(receiver)
+         console.log("receive balance after transfer", balanceOf.toString())
+          
+        })
       })
     })
