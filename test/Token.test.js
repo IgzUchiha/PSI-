@@ -1,4 +1,4 @@
-import { tokens } from '../helpers'
+import { tokens, EVM_REVERT } from '../helpers'
 // const {tokens} = require('./helpers')
 const { default: Web3 } = require('web3')
 
@@ -94,7 +94,15 @@ contract('Token', ([deployer, receiver]) => {
         it('rejects insufficient balances' , async () => {
             let invalidAmount
             invalidAmount = tokens(100000000) // 100 million - greater than the supply of tokens
-            await token.transfer(receiver, invalidAmount, {from: deployer}).should.be.rejectedWith('VM Exception while processing transaction: revert')
+            await token.transfer(receiver, invalidAmount, {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+
+            //Attempt transfer tokens, when you have none 
+            invalidAmount = tokens(10) // receipient has no tokens
+            await token.transfer(deployer, invalidAmount, {from: receiver}).should.be.rejectedWith(EVM_REVERT)
+        })
+        it('rejects invalid recipients', async () => {
+            await token.transfer(0x0, amount, {from: deployer}).should.be.rejected
+
         })
     })
 
