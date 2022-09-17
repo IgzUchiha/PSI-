@@ -22,7 +22,7 @@ require('chai')
 // beforeEach(async () => {
 //     token = await Token.new()
 // })
-contract('Token', ([deployer, receiver]) => {
+contract('Token', ([deployer, receiver, exchange]) => {
     const name = 'Psicedelic';
     const symbol = 'PSI';
     const decimals = '18'
@@ -89,22 +89,40 @@ contract('Token', ([deployer, receiver]) => {
                 event.value.toString().should.equal(amount.toString(), 'value is correct')
             })
         })
-    describe('failure', async () => {
+        describe('failure', async () => {
 
-        it('rejects insufficient balances' , async () => {
-            let invalidAmount
-            invalidAmount = tokens(100000000) // 100 million - greater than the supply of tokens
-            await token.transfer(receiver, invalidAmount, {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+            it('rejects insufficient balances', async () => {
+                let invalidAmount
+                invalidAmount = tokens(100000000) // 100 million - greater than the supply of tokens
+                await token.transfer(receiver, invalidAmount, { from: deployer }).should.be.rejectedWith(EVM_REVERT)
 
-            //Attempt transfer tokens, when you have none 
-            invalidAmount = tokens(10) // receipient has no tokens
-            await token.transfer(deployer, invalidAmount, {from: receiver}).should.be.rejectedWith(EVM_REVERT)
+                //Attempt transfer tokens, when you have none 
+                invalidAmount = tokens(10) // receipient has no tokens
+                await token.transfer(deployer, invalidAmount, { from: receiver }).should.be.rejectedWith(EVM_REVERT)
+            })
+            it('rejects invalid recipients', async () => {
+                await token.transfer(0x0, amount, { from: deployer }).should.be.rejected
+
+            })
         })
-        it('rejects invalid recipients', async () => {
-            await token.transfer(0x0, amount, {from: deployer}).should.be.rejected
 
-        })
     })
+    describe('approving tokens', () => {
+        let result
+        let amount
 
+        beforeEach(async () => {
+            amount = tokens(100)
+            result = token.approve(exchange, amount, {from: deployer})
+        })
+        describe('success', () => {
+            it('allocates an allowance for delegated token spending on exchange', async () => {
+                const allowance = await token.allowance(deployer, exchange)
+                allowance.toString().should.equal(amount.toString())
+            })
+        })
+        describe('failure', () => {
+
+        })
     })
 })

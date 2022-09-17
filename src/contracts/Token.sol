@@ -10,6 +10,7 @@ contract Token {
     uint256 public totalSupply;
     //track balances
     mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     //events
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -21,14 +22,20 @@ contract Token {
         balanceOf[msg.sender] = totalSupply;
     }
 
-    function transfer(address _to, uint256 _value)public returns  (bool success)
-
-
+    function transfer(address _to, uint256 _value)
+        public
+        returns (bool success)
     {
+        require(_to != address(0));
         require(balanceOf[msg.sender] >= _value);
         balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value);
         balanceOf[_to] = balanceOf[_to].add(_value);
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
+    //Approve Tokens
+    function approve(address _spender, uint256 _value) public returns (bool success){
+        allowance[msg.sender][_spender] = _value;
+    }
+    //Transfer from
 }
